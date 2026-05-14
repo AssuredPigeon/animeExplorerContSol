@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Anime Explorer – Descubre los mejores animes, busca tus favoritos y explora el universo del anime.">
+    <meta name="description"
+        content="Anime Explorer – Descubre los mejores animes, busca tus favoritos y explora el universo del anime.">
     <title>@yield('title', 'Anime Explorer')</title>
 
     {{-- Bootstrap 5 --}}
@@ -12,32 +14,40 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     {{-- Google Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
     <style>
         /* ============================================================
            DESIGN SYSTEM – Anime Explorer Dark Theme
         ============================================================ */
         :root {
-            --bg-base:      #0d0d1a;
-            --bg-card:      #14142a;
-            --bg-card-hover:#1c1c38;
-            --bg-navbar:    #0a0a16ee;
-            --accent:       #7c3aed;
+            --bg-base: #0d0d1a;
+            --bg-card: #14142a;
+            --bg-card-hover: #1c1c38;
+            --bg-navbar: #0a0a16ee;
+            --accent: #7c3aed;
             --accent-light: #a855f7;
-            --accent-glow:  rgba(124,58,237,.35);
-            --gold:         #f59e0b;
-            --green:        #10b981;
-            --red:          #ef4444;
+            --accent-glow: rgba(124, 58, 237, .35);
+            --gold: #f59e0b;
+            --green: #10b981;
+            --red: #ef4444;
             --text-primary: #f1f1f8;
-            --text-muted:   #8888aa;
-            --border:       rgba(124,58,237,.25);
-            --radius-card:  14px;
-            --transition:   .25s cubic-bezier(.4,0,.2,1);
+            --text-muted: #8888aa;
+            --border: rgba(124, 58, 237, .25);
+            --radius-card: 14px;
+            --transition: .25s cubic-bezier(.4, 0, .2, 1);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
 
         body {
             font-family: 'Outfit', sans-serif;
@@ -47,9 +57,18 @@
         }
 
         /* ---- Scrollbar ---- */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: var(--bg-base); }
-        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-base);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 3px;
+        }
 
         /* ============================================================
            NAVBAR
@@ -100,17 +119,18 @@
             font-size: .7rem;
             font-weight: 600;
             color: var(--text-muted);
-            background: rgba(255,255,255,.04);
-            border: 1px solid rgba(255,255,255,.12);
+            background: rgba(255, 255, 255, .04);
+            border: 1px solid rgba(255, 255, 255, .12);
             padding: .22rem .6rem;
             border-radius: 6px;
             letter-spacing: .04em;
             margin-left: .5rem;
             transition: color var(--transition), border-color var(--transition);
         }
+
         .contsol-badge:hover {
             color: var(--text-primary);
-            border-color: rgba(255,255,255,.25);
+            border-color: rgba(255, 255, 255, .25);
         }
 
         .nav-link-ae {
@@ -122,12 +142,16 @@
             transition: color var(--transition), background var(--transition);
             text-decoration: none;
         }
+
         .nav-link-ae:hover,
         .nav-link-ae.active {
             color: var(--text-primary) !important;
-            background: rgba(124,58,237,.18);
+            background: rgba(124, 58, 237, .18);
         }
-        .nav-link-ae.active { color: var(--accent-light) !important; }
+
+        .nav-link-ae.active {
+            color: var(--accent-light) !important;
+        }
 
         /* ============================================================
            PAGE HEADER
@@ -168,9 +192,10 @@
             flex-direction: column;
             height: 100%;
         }
+
         .anime-card:hover {
             transform: translateY(-6px);
-            box-shadow: 0 16px 48px rgba(0,0,0,.5), 0 0 0 1px var(--accent);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, .5), 0 0 0 1px var(--accent);
             border-color: var(--accent);
             color: inherit;
         }
@@ -182,12 +207,14 @@
             overflow: hidden;
             background: linear-gradient(135deg, var(--accent) 0%, #1e0a3c 100%);
         }
+
         .card-poster img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             transition: transform .4s ease;
         }
+
         .anime-card:hover .card-poster img {
             transform: scale(1.06);
         }
@@ -211,7 +238,7 @@
             position: absolute;
             top: .6rem;
             right: .6rem;
-            background: rgba(0,0,0,.7);
+            background: rgba(0, 0, 0, .7);
             backdrop-filter: blur(6px);
             color: var(--gold);
             font-size: .78rem;
@@ -233,7 +260,7 @@
             background: linear-gradient(135deg, var(--accent) 0%, #1e0a3c 100%);
             font-weight: 800;
             font-size: 2.2rem;
-            color: rgba(255,255,255,.9);
+            color: rgba(255, 255, 255, .9);
             letter-spacing: .05em;
             text-align: center;
             padding: .5rem;
@@ -268,7 +295,7 @@
         .meta-tag {
             font-size: .68rem;
             color: var(--text-muted);
-            background: rgba(255,255,255,.05);
+            background: rgba(255, 255, 255, .05);
             padding: .15rem .45rem;
             border-radius: 4px;
             white-space: nowrap;
@@ -299,7 +326,11 @@
             transition: border-color var(--transition), box-shadow var(--transition);
             outline: none;
         }
-        .search-input::placeholder { color: var(--text-muted); }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
         .search-input:focus {
             border-color: var(--accent);
             box-shadow: 0 0 0 3px var(--accent-glow);
@@ -318,6 +349,7 @@
             transition: opacity var(--transition), box-shadow var(--transition);
             white-space: nowrap;
         }
+
         .btn-search:hover {
             opacity: .9;
             box-shadow: 0 6px 24px var(--accent-glow);
@@ -332,31 +364,48 @@
             gap: 2rem;
             align-items: start;
         }
+
         @media (max-width: 768px) {
-            .detail-hero { grid-template-columns: 1fr; }
+            .detail-hero {
+                grid-template-columns: 1fr;
+            }
         }
 
         .detail-poster {
             border-radius: var(--radius-card);
             overflow: hidden;
-            box-shadow: 0 24px 64px rgba(0,0,0,.5);
+            box-shadow: 0 24px 64px rgba(0, 0, 0, .5);
         }
-        .detail-poster img { width: 100%; display: block; }
 
-        .detail-info { display: flex; flex-direction: column; gap: 1rem; }
+        .detail-poster img {
+            width: 100%;
+            display: block;
+        }
+
+        .detail-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
 
         .detail-title {
             font-size: 1.8rem;
             font-weight: 800;
             line-height: 1.2;
         }
+
         .detail-title-jp {
             color: var(--text-muted);
             font-size: .9rem;
             font-weight: 400;
         }
 
-        .detail-badges { display: flex; flex-wrap: wrap; gap: .5rem; }
+        .detail-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem;
+        }
+
         .badge-ae {
             font-size: .75rem;
             font-weight: 600;
@@ -364,15 +413,31 @@
             border-radius: 6px;
             border: 1px solid;
         }
-        .badge-score  { color: var(--gold);  border-color: var(--gold);  background: rgba(245,158,11,.1); }
-        .badge-status { color: var(--green); border-color: var(--green); background: rgba(16,185,129,.1); }
-        .badge-type   { color: var(--accent-light); border-color: var(--accent); background: var(--accent-glow); }
+
+        .badge-score {
+            color: var(--gold);
+            border-color: var(--gold);
+            background: rgba(245, 158, 11, .1);
+        }
+
+        .badge-status {
+            color: var(--green);
+            border-color: var(--green);
+            background: rgba(16, 185, 129, .1);
+        }
+
+        .badge-type {
+            color: var(--accent-light);
+            border-color: var(--accent);
+            background: var(--accent-glow);
+        }
 
         .detail-stats {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
             gap: .75rem;
         }
+
         .stat-box {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -380,8 +445,19 @@
             padding: .75rem;
             text-align: center;
         }
-        .stat-label { font-size: .65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .08em; }
-        .stat-value { font-size: 1rem; font-weight: 700; margin-top: .2rem; }
+
+        .stat-label {
+            font-size: .65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .stat-value {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-top: .2rem;
+        }
 
         .synopsis-box {
             background: var(--bg-card);
@@ -389,8 +465,20 @@
             border-radius: var(--radius-card);
             padding: 1.25rem;
         }
-        .synopsis-box h3 { font-size: .85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: .6rem; }
-        .synopsis-box p  { font-size: .9rem; line-height: 1.7; color: var(--text-primary); }
+
+        .synopsis-box h3 {
+            font-size: .85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            margin-bottom: .6rem;
+        }
+
+        .synopsis-box p {
+            font-size: .9rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+        }
 
         .genre-pill {
             background: var(--accent-glow);
@@ -413,7 +501,10 @@
             transition: color var(--transition);
             margin-bottom: 1.5rem;
         }
-        .btn-back:hover { color: var(--accent-light); }
+
+        .btn-back:hover {
+            color: var(--accent-light);
+        }
 
         /* ============================================================
            PAGINATION
@@ -425,6 +516,7 @@
             margin-top: 2.5rem;
             flex-wrap: wrap;
         }
+
         .page-btn {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -437,8 +529,18 @@
             text-decoration: none;
             transition: background var(--transition), border-color var(--transition);
         }
-        .page-btn:hover   { background: var(--bg-card-hover); border-color: var(--accent); color: var(--text-primary); }
-        .page-btn.current { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+        .page-btn:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--accent);
+            color: var(--text-primary);
+        }
+
+        .page-btn.current {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
 
         /* ============================================================
            SEARCH RESULT ROW (list style)
@@ -455,7 +557,13 @@
             color: inherit;
             transition: border-color var(--transition), transform var(--transition);
         }
-        .result-row:hover { border-color: var(--accent); transform: translateX(4px); color: inherit; }
+
+        .result-row:hover {
+            border-color: var(--accent);
+            transform: translateX(4px);
+            color: inherit;
+        }
+
         .result-thumb {
             width: 56px;
             height: 80px;
@@ -464,6 +572,7 @@
             flex-shrink: 0;
             background: var(--accent-glow);
         }
+
         .result-thumb-placeholder {
             width: 56px;
             height: 80px;
@@ -478,11 +587,37 @@
             color: #fff;
             text-align: center;
         }
-        .result-info { flex: 1; min-width: 0; }
-        .result-title { font-weight: 600; font-size: .9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .result-sub   { font-size: .78rem; color: var(--text-muted); margin-top: .2rem; }
-        .result-score { color: var(--gold); font-weight: 700; font-size: .9rem; flex-shrink: 0; }
-        .result-arrow { color: var(--text-muted); flex-shrink: 0; }
+
+        .result-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .result-title {
+            font-weight: 600;
+            font-size: .9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .result-sub {
+            font-size: .78rem;
+            color: var(--text-muted);
+            margin-top: .2rem;
+        }
+
+        .result-score {
+            color: var(--gold);
+            font-weight: 700;
+            font-size: .9rem;
+            flex-shrink: 0;
+        }
+
+        .result-arrow {
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
 
         /* ============================================================
            EMPTY STATE
@@ -492,21 +627,19 @@
             padding: 4rem 1rem;
             color: var(--text-muted);
         }
-        .empty-state i { font-size: 3rem; opacity: .4; margin-bottom: 1rem; display: block; }
-        .empty-state p { font-size: .95rem; }
 
-        /* ============================================================
-           FOOTER
-        ============================================================ */
-        .footer-ae {
-            text-align: center;
-            padding: 2rem 1rem;
-            color: var(--text-muted);
-            font-size: .8rem;
-            border-top: 1px solid var(--border);
-            margin-top: 3rem;
+        .empty-state i {
+            font-size: 3rem;
+            opacity: .4;
+            margin-bottom: 1rem;
+            display: block;
         }
-        .footer-ae a { color: var(--accent-light); text-decoration: none; }
+
+        .empty-state p {
+            font-size: .95rem;
+        }
+
+
 
         /* ============================================================
            LOADING SPINNER
@@ -520,22 +653,38 @@
             animation: spin .7s linear infinite;
             margin: 3rem auto;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
 
         /* Fade-in animation */
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to   { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        .fade-in-up { animation: fadeInUp .45s ease forwards; }
+
+        .fade-in-up {
+            animation: fadeInUp .45s ease forwards;
+        }
     </style>
 
     @yield('head')
 </head>
+
 <body>
 
     {{-- ======================================================
-         NAVBAR
+    NAVBAR
     ====================================================== --}}
     <nav class="navbar-ae">
         <div class="container d-flex align-items-center justify-content-between">
@@ -551,11 +700,11 @@
             {{-- Nav links + ContSol badge --}}
             <div class="d-flex align-items-center gap-1">
                 <a href="{{ route('anime.index') }}"
-                   class="nav-link-ae {{ request()->routeIs('anime.index') ? 'active' : '' }}">
+                    class="nav-link-ae {{ request()->routeIs('anime.index') ? 'active' : '' }}">
                     <i class="bi bi-trophy me-1"></i>Top Anime
                 </a>
                 <a href="{{ route('anime.search') }}"
-                   class="nav-link-ae {{ request()->routeIs('anime.search') ? 'active' : '' }}">
+                    class="nav-link-ae {{ request()->routeIs('anime.search') ? 'active' : '' }}">
                     <i class="bi bi-search me-1"></i>Búsqueda
                 </a>
             </div>
@@ -564,24 +713,16 @@
     </nav>
 
     {{-- ======================================================
-         MAIN CONTENT
+    MAIN CONTENT
     ====================================================== --}}
     <main class="container py-4">
         @yield('content')
     </main>
 
-    {{-- ======================================================
-         FOOTER
-    ====================================================== --}}
-    <footer class="footer-ae">
-        <div class="container">
-            <p>Datos proporcionados por <a href="https://jikan.moe" target="_blank" rel="noopener">Jikan API</a> &mdash; MyAnimeList unofficial REST API</p>
-            <p class="mt-1" style="opacity:.5;">Anime Explorer &copy; {{ date('Y') }} &nbsp;|&nbsp; Desarrollado con Laravel &amp; Bootstrap</p>
-        </div>
-    </footer>
 
     {{-- Bootstrap JS --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     @yield('scripts')
 </body>
+
 </html>

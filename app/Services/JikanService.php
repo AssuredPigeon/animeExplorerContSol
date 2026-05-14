@@ -71,13 +71,13 @@ class JikanService
     }
 
     /**
-     * Get anime details by MAL ID.
+     * Get anime details by MAL ID (synopsis auto-translated to Spanish).
      */
     public function getAnimeById(int $id): array
     {
         $cacheKey = "anime_detail_{$id}";
 
-        return Cache::remember($cacheKey, now()->addHours(6), function () use ($id) {
+        $result = Cache::remember($cacheKey, now()->addHours(6), function () use ($id) {
             try {
                 $response = $this->client->get($this->baseUrl . "/anime/{$id}");
                 return json_decode($response->getBody()->getContents(), true);
@@ -85,6 +85,78 @@ class JikanService
                 Log::error("Jikan API error (getAnimeById {$id}): " . $e->getMessage());
                 return ['data' => null];
             }
+        });
+
+        // Translate synopsis to Spanish (cached separately for 30 days)
+        if (!empty($result['data']['synopsis'])) {
+            $result['data']['synopsis'] = $this->translateToSpanish($result['data']['synopsis']);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Translate text to Spanish using MyMemory free API (no key required).
+     * Splits long texts into chunks to respect the 500-char limit per request.
+     */
+    protected function translateToSpanish(string $text): string
+    {
+        if (empty(trim($text))) {
+            return $text;
+        }
+
+        $cacheKey = 'synopsis_es_' . md5($text);
+
+        return Cache::remember($cacheKey, now()->addDays(30), function () use ($text) {
+            // Split into sentences, grouping them into chunks < 490 chars
+            $sentences = preg_split('/(?<=[.!?])\s+/', $text);
+            $chunks    = [];
+            $current   = '';
+
+            foreach ($sentences as $sentence) {
+                if (strlen($current) + strlen($sentence) + 1 > 490) {
+                    if ($current !== '') {
+                        $chunks[] = trim($current);
+                    }
+                    $current = $sentence;
+                } else {
+                    $current .= ($current ? ' ' : '') . $sentence;
+                }
+            }
+            if ($current !== '') {
+                $chunks[] = trim($current);
+            }
+
+            $translated = [];
+
+            foreach ($chunks as $chunk) {
+                try {
+                    $response = $this->client->get('https://api.mymemory.translated.net/get', [
+                        'query' => [
+                            'q'        => $chunk,
+                            'langpair' => 'en|es',
+                        ],
+                    ]);
+
+                    $data   = json_decode($response->getBody()->getContents(), true);
+                    $status = $data['responseStatus'] ?? 0;
+
+                    if ($status === 200 && !empty($data['responseData']['translatedText'])) {
+                        $translated[] = $data['responseData']['translatedText'];
+                    } else {
+                        $translated[] = $chunk; // fallback al original
+                    }
+
+                    // Pequeña pausa para respetar rate limits de la API
+                    usleep(300000); // 300ms entre peticiones
+
+                } catch (\Exception $e) {
+                    Log::warning("Translation error: " . $e->getMessage());
+                    $translated[] = $chunk;
+                }
+            }
+
+            return implode(' ', $translated);
         });
     }
 }

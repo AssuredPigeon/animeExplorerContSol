@@ -181,6 +181,10 @@
 @php
     $title      = $anime['title']          ?? 'Sin título';
     $titleJp    = $anime['title_japanese'] ?? '';
+    // Check if this anime is already in user's favorites
+    $isFav = auth()->check()
+        ? auth()->user()->favorites()->where('mal_id', $anime['mal_id'] ?? 0)->exists()
+        : false;
     $imgLg      = $anime['images']['jpg']['large_image_url'] ?? $anime['images']['jpg']['image_url'] ?? null;
     $imgSm      = $anime['images']['jpg']['image_url'] ?? null;
     $score      = $anime['score']          ?? null;
@@ -299,9 +303,41 @@
                 </div>
                 @endif
 
-                <a href="{{ $malUrl }}" target="_blank" rel="noopener" class="btn-mal">
-                    <i class="bi bi-box-arrow-up-right"></i> Ver en MyAnimeList
-                </a>
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <a href="{{ $malUrl }}" target="_blank" rel="noopener" class="btn-mal">
+                        <i class="bi bi-box-arrow-up-right"></i> Ver en MyAnimeList
+                    </a>
+
+                    @auth
+                    <button id="fav-btn"
+                            data-mal-id="{{ $anime['mal_id'] }}"
+                            data-title="{{ addslashes($title) }}"
+                            data-image="{{ $imgLg ?? $imgSm ?? '' }}"
+                            data-score="{{ $score ?? '' }}"
+                            data-type="{{ $type ?? '' }}"
+                            data-year="{{ $year ?? '' }}"
+                            data-fav="{{ $isFav ? '1' : '0' }}"
+                            style="display:inline-flex;align-items:center;gap:.4rem;
+                                   padding:.45rem .9rem;border-radius:8px;border:1px solid;
+                                   font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:600;
+                                   cursor:pointer;transition:.22s;
+                                   {{ $isFav
+                                        ? 'background:rgba(239,68,68,.15);border-color:var(--red);color:var(--red);'
+                                        : 'background:transparent;border-color:var(--border);color:var(--text-muted);' }}">
+                        <i class="bi {{ $isFav ? 'bi-heart-fill' : 'bi-heart' }}"></i>
+                        <span>{{ $isFav ? 'En favoritos' : 'Agregar a favoritos' }}</span>
+                    </button>
+                    @else
+                    <a href="{{ route('login') }}"
+                       style="display:inline-flex;align-items:center;gap:.4rem;padding:.45rem .9rem;
+                              border-radius:8px;border:1px solid var(--border);color:var(--text-muted);
+                              font-size:.85rem;font-weight:600;text-decoration:none;transition:.22s;"
+                       onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--text-primary)'"
+                       onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">
+                        <i class="bi bi-heart"></i> Iniciar sesión para guardar
+                    </a>
+                    @endauth
+                </div>
             </div>
         </div>
     </div>
@@ -395,4 +431,79 @@
 </div>
 </div>
 
+@endsection
+
+@section('scripts')
+@auth
+<script>
+(function () {
+    const btn = document.getElementById('fav-btn');
+    if (!btn) return;
+
+    btn.addEventListener('click', async function () {
+        btn.disabled = true;
+
+        const payload = {
+            mal_id:    btn.dataset.malId,
+            title:     btn.dataset.title,
+            image_url: btn.dataset.image,
+            score:     btn.dataset.score  || null,
+            type:      btn.dataset.type   || null,
+            year:      btn.dataset.year   || null,
+        };
+
+        try {
+            const res = await fetch('{{ route("favorites.toggle") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept':       'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+
+            const data = await res.json();
+            const added = data.status === 'added';
+
+            // Update button appearance
+            btn.dataset.fav = added ? '1' : '0';
+            btn.querySelector('i').className  = added ? 'bi bi-heart-fill' : 'bi bi-heart';
+            btn.querySelector('span').textContent = added ? 'En favoritos' : 'Agregar a favoritos';
+
+            if (added) {
+                btn.style.background    = 'rgba(239,68,68,.15)';
+                btn.style.borderColor   = 'var(--red)';
+                btn.style.color         = 'var(--red)';
+            } else {
+                btn.style.background    = 'transparent';
+                btn.style.borderColor   = 'var(--border)';
+                btn.style.color         = 'var(--text-muted)';
+            }
+
+            showToast(added ? '❤️ Agregado a favoritos' : '🗑️ Eliminado de favoritos');
+        } catch (e) {
+            showToast('⚠️ Error al actualizar favoritos', true);
+        } finally {
+            btn.disabled = false;
+        }
+    });
+
+    function showToast(msg, isError = false) {
+        const t = document.createElement('div');
+        t.textContent = msg;
+        t.style.cssText = `
+            position:fixed; bottom:5rem; left:50%; transform:translateX(-50%);
+            background:${isError ? '#7f1d1d' : 'var(--bg-card)'}; border:1px solid var(--border);
+            color:var(--text-primary); padding:.65rem 1.4rem; border-radius:10px;
+            font-family:'Outfit',sans-serif; font-size:.88rem; font-weight:500;
+            box-shadow:0 8px 32px rgba(0,0,0,.5); z-index:9999;
+            animation:fadeInUp .3s ease forwards;
+        `;
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 2800);
+    }
+})();
+</script>
+@endauth
 @endsection

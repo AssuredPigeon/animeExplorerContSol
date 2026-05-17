@@ -697,7 +697,7 @@
                 </div>
             </a>
 
-            {{-- Nav links + ContSol badge --}}
+            {{-- Nav links --}}
             <div class="d-flex align-items-center gap-1">
                 <a href="{{ route('home') }}"
                     class="nav-link-ae {{ request()->routeIs('home') ? 'active' : '' }}">
@@ -715,6 +715,56 @@
                     class="nav-link-ae {{ request()->routeIs('about') ? 'active' : '' }}">
                     <i class="bi bi-info-circle me-1"></i>Acerca de
                 </a>
+
+                @auth
+                    <a href="{{ route('favorites.index') }}"
+                        class="nav-link-ae {{ request()->routeIs('favorites.*') ? 'active' : '' }}"
+                        style="{{ request()->routeIs('favorites.*') ? '' : 'color:var(--red) !important;' }}">
+                        <i class="bi bi-heart-fill me-1"></i>Favoritos
+                    </a>
+                    {{-- User dropdown --}}
+                    <div class="dropdown ms-1">
+                        <button class="nav-link-ae" style="background:rgba(124,58,237,.15);border:1px solid var(--border);cursor:pointer;"
+                                data-bs-toggle="dropdown" aria-expanded="false" id="user-menu-btn">
+                            <i class="bi bi-person-circle me-1"></i>{{ Str::limit(Auth::user()->name, 14) }}
+                            <i class="bi bi-chevron-down ms-1" style="font-size:.65rem"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end"
+                            style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;min-width:160px;padding:.4rem;">
+                            <li>
+                                <span style="display:block;padding:.4rem .9rem;font-size:.75rem;color:var(--text-muted);">
+                                    {{ Auth::user()->email }}
+                                </span>
+                            </li>
+                            <li><hr style="border-color:var(--border);margin:.2rem 0;"></li>
+                            <li>
+                                <a href="{{ route('favorites.index') }}"
+                                   class="dropdown-item"
+                                   style="color:var(--text-primary);border-radius:8px;font-size:.88rem;padding:.45rem .9rem;">
+                                    <i class="bi bi-heart-fill me-2" style="color:var(--red)"></i>Mis favoritos
+                                </a>
+                            </li>
+                            <li>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item"
+                                            style="color:var(--text-muted);border-radius:8px;font-size:.88rem;padding:.45rem .9rem;background:none;border:none;width:100%;text-align:left;cursor:pointer;">
+                                        <i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                @else
+                    <a href="{{ route('login') }}" class="nav-link-ae">
+                        <i class="bi bi-person me-1"></i>Entrar
+                    </a>
+                    <a href="{{ route('register') }}"
+                       style="background:linear-gradient(135deg,var(--accent),var(--accent-light));color:#fff;font-size:.85rem;font-weight:600;padding:.38rem .9rem;border-radius:8px;text-decoration:none;transition:opacity .2s;white-space:nowrap;"
+                       onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+                        Registrarse
+                    </a>
+                @endauth
             </div>
 
         </div>

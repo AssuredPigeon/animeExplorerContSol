@@ -14,10 +14,10 @@ class AnimeController extends Controller
      */
     public function index(Request $request)
     {
-        $page   = (int) $request->query('page', 1);
+        $page = (int) $request->query('page', 1);
         $result = $this->jikan->getTopAnime($page, 24);
 
-        $animes     = $result['data']       ?? [];
+        $animes = $result['data'] ?? [];
         $pagination = $result['pagination'] ?? [];
 
         return view('anime.index', compact('animes', 'pagination', 'page'));
@@ -28,14 +28,14 @@ class AnimeController extends Controller
      */
     public function search(Request $request)
     {
-        $query  = $request->input('q', '');
-        $page   = (int) $request->query('page', 1);
+        $query = $request->input('q', '');
+        $page = (int) $request->query('page', 1);
         $animes = [];
         $pagination = [];
 
-        if (!empty(trim($query))) {
-            $result     = $this->jikan->searchAnime($query, $page, 20);
-            $animes     = $result['data']       ?? [];
+        if (! empty(trim($query))) {
+            $result = $this->jikan->searchAnime($query, $page, 20);
+            $animes = $result['data'] ?? [];
             $pagination = $result['pagination'] ?? [];
         }
 
@@ -48,9 +48,9 @@ class AnimeController extends Controller
     public function show(int $id)
     {
         $result = $this->jikan->getAnimeById($id);
-        $anime  = $result['data'] ?? null;
+        $anime = $result['data'] ?? null;
 
-        if (!$anime) {
+        if (! $anime) {
             abort(404, 'Anime not found.');
         }
 

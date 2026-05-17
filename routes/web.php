@@ -1,10 +1,11 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AnimeController;
+use App\Http\Controllers\HomeController;
+use Illuminate\Support\Facades\Route;
 
-// Redirect root to top anime
-Route::get('/', fn() => redirect()->route('anime.index'));
+// Landing page
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Top anime list
 Route::get('/top', [AnimeController::class, 'index'])->name('anime.index');
@@ -14,3 +15,6 @@ Route::get('/search', [AnimeController::class, 'search'])->name('anime.search');
 
 // Anime detail
 Route::get('/anime/{id}', [AnimeController::class, 'show'])->name('anime.show')->where('id', '[0-9]+');
+
+// About
+Route::get('/about', fn () => view('about'))->name('about');

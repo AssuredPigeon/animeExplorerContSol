@@ -690,7 +690,7 @@
         <div class="container d-flex align-items-center justify-content-between">
 
             {{-- Brand --}}
-            <a href="{{ route('anime.index') }}" class="navbar-brand-ae">
+            <a href="{{ route('home') }}" class="navbar-brand-ae">
                 <div style="display:flex; align-items:baseline; gap:.5rem;">
                     <span class="brand-title">Anime Explorer</span>
                     <span class="contsol-badge" style="margin-left:0; position:relative; top:-1px;">ContSol</span>
@@ -699,6 +699,10 @@
 
             {{-- Nav links + ContSol badge --}}
             <div class="d-flex align-items-center gap-1">
+                <a href="{{ route('home') }}"
+                    class="nav-link-ae {{ request()->routeIs('home') ? 'active' : '' }}">
+                    <i class="bi bi-house me-1"></i>Inicio
+                </a>
                 <a href="{{ route('anime.index') }}"
                     class="nav-link-ae {{ request()->routeIs('anime.index') ? 'active' : '' }}">
                     <i class="bi bi-trophy me-1"></i>Top Anime
@@ -706,6 +710,10 @@
                 <a href="{{ route('anime.search') }}"
                     class="nav-link-ae {{ request()->routeIs('anime.search') ? 'active' : '' }}">
                     <i class="bi bi-search me-1"></i>Búsqueda
+                </a>
+                <a href="{{ route('about') }}"
+                    class="nav-link-ae {{ request()->routeIs('about') ? 'active' : '' }}">
+                    <i class="bi bi-info-circle me-1"></i>Acerca de
                 </a>
             </div>
 

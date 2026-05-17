@@ -10,13 +10,16 @@ use Illuminate\Support\Facades\Log;
 class JikanService
 {
     protected Client $client;
+
     protected string $baseUrl = 'https://api.jikan.moe/v4';
 
     public function __construct()
     {
         // NOTE: no base_uri here – we build full URLs to avoid Guzzle path-resolution issues
+        // verify:false fixes cURL error 60 (SSL cert) on Windows local dev environments
         $this->client = new Client([
             'timeout' => 10.0,
+            'verify'  => false,
         ]);
     }
 
@@ -29,16 +32,17 @@ class JikanService
 
         return Cache::remember($cacheKey, now()->addMinutes(30), function () use ($page, $limit) {
             try {
-                $response = $this->client->get($this->baseUrl . '/top/anime', [
+                $response = $this->client->get($this->baseUrl.'/top/anime', [
                     'query' => [
-                        'page'  => $page,
+                        'page' => $page,
                         'limit' => $limit,
                     ],
                 ]);
 
                 return json_decode($response->getBody()->getContents(), true);
             } catch (RequestException $e) {
-                Log::error('Jikan API error (getTopAnime): ' . $e->getMessage());
+                Log::error('Jikan API error (getTopAnime): '.$e->getMessage());
+
                 return ['data' => [], 'pagination' => []];
             }
         });
@@ -49,22 +53,23 @@ class JikanService
      */
     public function searchAnime(string $query, int $page = 1, int $limit = 20): array
     {
-        $cacheKey = "search_anime_" . md5($query) . "_page_{$page}";
+        $cacheKey = 'search_anime_'.md5($query)."_page_{$page}";
 
         return Cache::remember($cacheKey, now()->addMinutes(15), function () use ($query, $page, $limit) {
             try {
-                $response = $this->client->get($this->baseUrl . '/anime', [
+                $response = $this->client->get($this->baseUrl.'/anime', [
                     'query' => [
-                        'q'     => $query,
-                        'page'  => $page,
+                        'q' => $query,
+                        'page' => $page,
                         'limit' => $limit,
-                        'sfw'   => true,
+                        'sfw' => true,
                     ],
                 ]);
 
                 return json_decode($response->getBody()->getContents(), true);
             } catch (RequestException $e) {
-                Log::error('Jikan API error (searchAnime): ' . $e->getMessage());
+                Log::error('Jikan API error (searchAnime): '.$e->getMessage());
+
                 return ['data' => [], 'pagination' => []];
             }
         });
@@ -79,16 +84,18 @@ class JikanService
 
         $result = Cache::remember($cacheKey, now()->addHours(6), function () use ($id) {
             try {
-                $response = $this->client->get($this->baseUrl . "/anime/{$id}");
+                $response = $this->client->get($this->baseUrl."/anime/{$id}");
+
                 return json_decode($response->getBody()->getContents(), true);
             } catch (RequestException $e) {
-                Log::error("Jikan API error (getAnimeById {$id}): " . $e->getMessage());
+                Log::error("Jikan API error (getAnimeById {$id}): ".$e->getMessage());
+
                 return ['data' => null];
             }
         });
 
         // Translate synopsis to Spanish (cached separately for 30 days)
-        if (!empty($result['data']['synopsis'])) {
+        if (! empty($result['data']['synopsis'])) {
             $result['data']['synopsis'] = $this->translateToSpanish($result['data']['synopsis']);
         }
 
@@ -105,13 +112,13 @@ class JikanService
             return $text;
         }
 
-        $cacheKey = 'synopsis_es_' . md5($text);
+        $cacheKey = 'synopsis_es_'.md5($text);
 
         return Cache::remember($cacheKey, now()->addDays(30), function () use ($text) {
             // Split into sentences, grouping them into chunks < 490 chars
             $sentences = preg_split('/(?<=[.!?])\s+/', $text);
-            $chunks    = [];
-            $current   = '';
+            $chunks = [];
+            $current = '';
 
             foreach ($sentences as $sentence) {
                 if (strlen($current) + strlen($sentence) + 1 > 490) {
@@ -120,7 +127,7 @@ class JikanService
                     }
                     $current = $sentence;
                 } else {
-                    $current .= ($current ? ' ' : '') . $sentence;
+                    $current .= ($current ? ' ' : '').$sentence;
                 }
             }
             if ($current !== '') {
@@ -133,15 +140,15 @@ class JikanService
                 try {
                     $response = $this->client->get('https://api.mymemory.translated.net/get', [
                         'query' => [
-                            'q'        => $chunk,
+                            'q' => $chunk,
                             'langpair' => 'en|es',
                         ],
                     ]);
 
-                    $data   = json_decode($response->getBody()->getContents(), true);
+                    $data = json_decode($response->getBody()->getContents(), true);
                     $status = $data['responseStatus'] ?? 0;
 
-                    if ($status === 200 && !empty($data['responseData']['translatedText'])) {
+                    if ($status === 200 && ! empty($data['responseData']['translatedText'])) {
                         $translated[] = $data['responseData']['translatedText'];
                     } else {
                         $translated[] = $chunk; // fallback al original
@@ -151,7 +158,7 @@ class JikanService
                     usleep(300000); // 300ms entre peticiones
 
                 } catch (\Exception $e) {
-                    Log::warning("Translation error: " . $e->getMessage());
+                    Log::warning('Translation error: '.$e->getMessage());
                     $translated[] = $chunk;
                 }
             }
